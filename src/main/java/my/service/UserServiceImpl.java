@@ -12,14 +12,12 @@ import java.util.List;
 @Transactional
 public class UserServiceImpl implements UserService {
     private UserDao userDao;
-
+    private boolean isInitDB;
     public UserServiceImpl(UserDao userDao) {
         this.userDao = userDao;
     }
 
-    public UserDao getUserDao() {
-        return userDao;
-    }
+
 
     @Override
     public void createUser(User user) {
@@ -28,7 +26,11 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public List<User> readUsers() {
-        return getUserDao().readUsers();
+        if (!isInitDB) {
+         initDB();
+         isInitDB = true;
+        }
+        return userDao.readUsers();
     }
 
     @Override
@@ -44,5 +46,13 @@ public class UserServiceImpl implements UserService {
     @Override
     public User getUserById(int id) {
         return userDao.getUserById(id);
+    }
+    private void initDB () {
+        userDao.createUser(new User("user", "user", 33, "user"));
+        userDao.createUser(new User("Andrew", "Agalakov", 20, "admin"));
+        userDao.createUser(new User("admin", "admin", 13, "admin"));
+        userDao.createUser(new User("Vyacheslav", "Prisyazhnuk", 2, "admin"));
+        userDao.createUser(new User("Olga", "Zhenova", 5, "admin"));
+        userDao.createUser(new User("Mazik", "Aple", 67, "admin"));
     }
 }
